@@ -1,0 +1,13 @@
+global array
+probe begin
+{
+	array[pid(), execname(), 1] = "hello"
+	array[pid(), execname(), 2] = "world"
+	array[pid(), execname(), 3] = "foo"
+
+	foreach([id, name, index] in array) {
+		printf("%d %s %d = %s\n", 
+			id, name, index, array[id, name, index])
+	}
+	exit()
+}

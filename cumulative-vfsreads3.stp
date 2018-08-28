@@ -1,0 +1,16 @@
+global reads
+
+probe vfs.read
+{
+	reads[execname()]++
+}
+
+probe timer.s(10) { exit() }
+
+probe end
+{
+	//foreach (count in reads- )
+	//foreach (count in reads+ )
+	foreach (count in reads- limit 3 )
+	  printf( "%s :%d\n", count, reads[count])
+}
