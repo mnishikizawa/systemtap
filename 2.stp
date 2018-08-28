@@ -1,9 +1,10 @@
 global array
+
 probe begin
 {
-	array[pid(), execname(), 1] = "hello"
-	array[pid(), execname(), 2] = "world"
-	array[pid(), execname(), 3] = "foo"
+	array[pid(), execname(), 1] = "a"
+	array[pid(), execname(), 2] = "b"
+	array[pid(), execname(), 3] = "c"
 
 	foreach([id, name, index] in array) {
 		printf("%d %s %d = %s\n", 

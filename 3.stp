@@ -1,0 +1,19 @@
+global array
+
+probe begin
+{
+        array[0] = "a"
+        array[1] = "b"
+        array[2] = "c"
+        exit()
+}
+
+probe end
+{
+        delete array[0]
+        foreach(k in array)
+                printf("%s\n", array[k])
+        delete array
+        foreach(k in array)
+                printf("%s\n", array[k])
+}
