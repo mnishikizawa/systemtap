@@ -1,0 +1,23 @@
+global tm_tcpm_ts
+
+probe begin {
+        printf("Starting detecting...\n")
+}
+
+// $tm can't read in function tcp_peer_is_proven in our envirionment (kernel 3.10.0-693.11.1.el7.x86_64).
+// So the alternative way is read it from another function tcpm_check_stamp which is called in tcp_peer_is_proven.
+probe kernel.function("tcpm_check_stamp").return {
+    tm_tcpm_ts = $tm->tcpm_ts;
+}
+
+// Print tm->tcpm_ts, req->ts_recent, their delta and return code. 
+probe kernel.function("tcp_peer_is_proven").return {
+    //tm_tcpm_ts = @cast(tcp_get_metrics_req($req, $dst), "struct tcp_metrics_block")->tcpm_ts;
+    if ($return==0) {
+        printf("tm->tcpm_ts:\t%d\treq->ts_recent:\t%d\tdelta:%d\treturn:\t%d\n",
+			tm_tcpm_ts,
+			$req->ts_recent,
+			(tm_tcpm_ts - $req->ts_recent),
+			$return);
+    }
+}
